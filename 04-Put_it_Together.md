@@ -163,7 +163,8 @@ and `/log`.**
 
 ```
 ENV     CONFIG_REPO     none
-CMD     wget --no-check-certificate -P /config/ $CONFIG_REPO >/dev/null 2>&1
+CMD     wget --no-check-certificate -P /config/ $CONFIG_REPO >/dev/null 2>&1 &&\
+        chmod 644 -R /config /data /log >/dev/null 2>&1
 ```
 
 So why is this busybox image internet enabled? Well busybox comes with a simple
@@ -174,6 +175,12 @@ runtime, use the `CONFIG_REPO` variable to grab a configuration file.  With the
 [busyboxplus][busyboxplus] image and some other additional Dockerfile logic, you
 could potentially grab your configuration from an
 [etcd](https://github.com/coreos/etcd) service in your cluster for example.
+
+The last half of the `CMD` step is to unify our file permissions so that they
+can be accessed by other system users (deamon, nobody, www, etc.) specific to
+the application in our Spoke container, but only editable by root. This must be
+done in the `CMD` step because we've already exposed the `/config` directory as
+a volume, so it is no longer editable by `RUN` steps in our Dockerfile.
 
 This is the first half of the Hub-Base Dockerfile. And you might have noticed
 that there is no `ADD` yet. This is because this part of the Dockerfile is for
@@ -266,9 +273,9 @@ version control PLUS also shares the volumes themselves with other containers.
 ONBUILD VOLUME  ["/config", "/data", "/log"]
 ```
 
-And just because it's a nice default `CMD`
+Again, we unify our file permissions as our last step.
 
-`ONBUILD CMD     /bin/true`
+`ONBUILD CMD     chmod 644 -R /config /data /log >/dev/null 2>&1`
 
 To recap, what actions do you actually do? If I wanted to pull my configuration from an
 external source and build my Hub container, I would only need to create
