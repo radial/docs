@@ -97,9 +97,7 @@ alter at run time.
 The next bit shows our filesystem logic in it's full glory.
 
 ```
-VOLUME          ["/config"]
-VOLUME          ["/data"]
-VOLUME          ["/log"]
+VOLUME          ["/config", "/data", "/log"]
 ```
 
 We don't use any standard or default paths for anything! There are a couple
@@ -265,9 +263,7 @@ declaring `VOLUME` AFTER we've obtained them makes them persist in Docker's
 version control PLUS also shares the volumes themselves with other containers.
 
 ```
-ONBUILD VOLUME  ["/config"]
-ONBUILD VOLUME  ["/data"]
-ONBUILD VOLUME  ["/log"]
+ONBUILD VOLUME  ["/config", "/data", "/log"]
 ```
 
 And just because it's a nice default `CMD`
