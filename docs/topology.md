@@ -87,20 +87,19 @@ respective Hub container and all of the above will be accessible to it. A Spoke
 containers purpose is to:
 
 * Manage, store, version, and run the app/code/process
-* Be completely configuration agnostic (mandatory)
-    * what this means is that as a rule, configuration cannot be bundled with
-      the Spoke container. It must be managed separately and stored in `/config`
-      as mentioned previously in the Hub container for this Wheel.
-* Be build-context agnostic (ideally).
-    * Being build-context agnostic is simply not having to rely on Docker's
-      `ADD` mechanism in the Dockerfile during the build process. The most
-      portable strategy is one where all source code and configuration are
-      stored in some type of version-controled repository that is accessible to
-      the Spoke container from any build location. Spoke containers ideally
-      should just need to know that the internet and it's respective Hub
-      container exists for all it's needs. However, in small or DIY server
-      clusters this is sometimes a feature that comes later, so the use of `ADD`
-      is still possible in the overall strategy.
+* Be completely configuration agnostic (mandatory). What this means is that as a
+  rule, configuration cannot be bundled with the Spoke container. It must be
+  managed separately and stored in `/config` as mentioned previously in the Hub
+  container for this Wheel.
+* Be build-context agnostic (ideally). Being build-context agnostic is simply
+  not having to rely on Docker's `ADD` mechanism in the Dockerfile during the
+  build process. The most portable strategy is one where all source code and
+  configuration are stored in some type of version-controled repository that is
+  accessible to the Spoke container from any build location. Spoke containers
+  ideally should just need to know that the internet and it's respective Hub
+  container exists for all it's needs. However, in small or DIY server clusters
+  this is sometimes a feature that comes later, so the use of `ADD` is still
+  possible in the overall strategy.
 * Also know about any other containers that it needs to act upon if that is it's
   goal (ie. knowing about a load balancer or database if this is a web server).
   But as far as the logistics of running our Spoke container, every Spoke

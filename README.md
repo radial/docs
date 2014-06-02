@@ -7,5 +7,12 @@ for manually implementing Docker containers in a predictable, intuitive, and fle
 
 I use the analogy of an "Axle", a "Hub", and a "Spoke" to help conceptually link
 together Docker containers into different classes based on what we need the
-entire stack (the "Wheel") to be doing. For more details, please check out the
-[rest of the documentation](https://radial.viewdocs.io/docs).
+entire stack (the "Wheel") to be doing. 
+
+This is the repository for the documentation. Please continue
+[here](http://radial.viewdocs.io/docs) to actually read it.
+
+##Credit
+
+Much thanks to [Jeff Lindsay](https://twitter.com/progrium) for his work on
+[viewdocs](https://github.com/progrium/viewdocs) which this documentation uses.

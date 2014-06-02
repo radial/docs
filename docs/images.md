@@ -33,6 +33,8 @@ git.
 If you are familiar with buildroot, you can see how these images were compiled
 [here](https://github.com/radial/core-busyboxplus)
 
+[busyboxplus]: https://index.docker.io/u/radial/busyboxplus/
+
 ###Core Distro
 
 The [core-distro images](https://index.docker.io/u/radial/distro/) are the fully
@@ -54,6 +56,7 @@ language for all images regardless of region.
     timezones to work properly and the mirrors to be fast.
 
 Source Dockerfiles can be found [here](https://github.com/radial/core-distro)
+
 ###Axle-Base
 
 The [Axle-Base image](https://index.docker.io/u/radial/axle-base/) is just a
@@ -66,7 +69,7 @@ Dockerfile source available [here](https://github.com/radial/imagebase-axle)
 
 ###Hub-Base
 
-The [hub-base image]() uses the git
+The [hub-base image](https://index.docker.io/u/radial/axle-base/) uses the git
 flavor of Busyboxplus as it's OS core. This is meant to allow it to combine both
 a [skeleton configuration](https://github.com/radial/config-supervisor) of
 [Supervisor](/radial/supervisor) as well as any additional configuration you
@@ -81,9 +84,6 @@ which persist data only as long as the container exists. This allows us both a
 durable version-controlled and a quick command-line only method for extracting
 our configuration and getting a Hub container up and running.
 
-Dockerfile source available [here](https://index.docker.io/u/radial/axle-base/)
-
-[busyboxplus]: https://index.docker.io/u/radial/busyboxplus/
 
 ###Spoke-Base
 

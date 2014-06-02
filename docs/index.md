@@ -41,7 +41,7 @@ glue it all together.
 * [The Topology](/docs/topology)
 * [Wheels](/docs/wheels)
 * [Radial Images](/docs/images)
-* [Supervisor](/radial/supervisor)
+* [Supervisor](/docs/supervisor)
 
 ###Instructions
 
@@ -83,9 +83,9 @@ Some implications and future goals for the Radial Topology:
   etc.
 * Many more examples in documentation
 * flowcharts and images
-* Testing, examples, and instructions for use with various PaaS tools.
-    * plug-ins? cli-tool? Wheels need to be built/destroyed/rebuilt in specific
-      ways, might need a basic wrapper fuction around Docker for this.
+* Testing, examples, and instructions for use with various PaaS tools. Does this
+  mean plug-ins? cli-tool? Wheels need to be built/destroyed/rebuilt in specific
+  ways, might need a basic wrapper fuction around Docker for this.
 
 ##Help
 
