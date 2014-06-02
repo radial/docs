@@ -16,20 +16,22 @@ Docker gives us two methods: `ADD` in a Dockerfile during the build process or
 some other method of checking out/downloading code from an external code
 repository using operating system tools from your container.  Depending on when
 this is done (in the Dockerfile build-process via `ADD`, or using the `CMD` or
-`ENTRYPOINT` of the resulting container, or if the code is injected into the
-container some other way) we get varying combinations of portability vs
-management. Hard-code your repository location into your Dockerfile or insert
-the code in the build via `ADD` and you loose portability of the Dockerfile, and
-if you're not careful how you add the code, you might never be able to actually
-secure it in a Docker "image" because it will be forever linked to a running
-container via a shared `VOLUME` which is not captured via `docker commit`.
+`ENTRYPOINT` of the resulting container) we get varying combinations of
+portability vs management. Hard-code your repository location into your
+Dockerfile or insert the code in the build via `ADD` and you loose portability
+of the Dockerfile, and if you're not careful how you inject the code in either
+`CMD` or `ENTRYPOINT` steps, you might never be able to actually secure it in a
+Docker "image" for version control because it will be forever linked to a
+running container via a shared `VOLUME` which is not captured via `docker
+commit`.
 
 **Issue 1: What is a viable way to get app code into docker containers?**
 
 Note: for those that don't care about sharing their Dockerfile on the index,
 just having a Dockerfile sit in their code base and use `ADD` is a great way to
-go. I'm just trying to present some methods for those that want to keep that
-aspect of portability and eat their cake too.
+go. I'm just trying to present some alternate methods for those that want to
+keep that aspect of portability as well as take advantage of Dockers version
+control system.
 
 ## Configuration
 
@@ -52,8 +54,8 @@ Docker forces you to separate these stages. So what's the issue? It's in actual
 implementation of these stages that is unclear. Putting everything into one
 Dockerfile is very slow to build, and not very portable. Plus, one would ideally
 not want to bother with anything other then deploying *only* the change they
-made to the configuration/codebase/environment etc., so that they can make use of
-Docker's caching system and be able to quickly deploy/revoke updates.
+made to the configuration/codebase/environment etc., so that they can make use
+of Docker's caching system and be able to quickly deploy/revoke updates.
 
 The more modular and separate different aspects of the deployment are, the
 easier it is to modify and piece them together again; modify
