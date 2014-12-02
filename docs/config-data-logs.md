@@ -1,4 +1,4 @@
-##Config, Data, Logs
+#Config, Data, Logs, Run
 
 There is an interesting filesystem strategy that I've found to be quite
 refreshing when dealing with exactly where to store information in my
@@ -22,6 +22,8 @@ enters a container.
   container ID. Since `/log` is an Axle container in the typical Radial
   topology, avoiding name collisions is mandatory. What better method then to
   use the containers own unique ID.
+* `/run` is used just like one would expect on typical systems for the location
+  of socket files and other runtime data.
 
 So why these paths instead of `/etc` or `/var/log` anyway? The reason is that it
 will make our lives easier in the long run if we free ourselves from the
@@ -39,7 +41,7 @@ with it throughout our cluster.
 
 In more detail:
 
-###Why `/config`?
+##Why `/config`?
 * Letting our app install a default configuration and then needing to either
   `ssh` or `docker run -it myapp-hub /bin/sh` to edit it is a nightmare to
   standardize; avoid it like the plague. We want to `ADD` an already primed
@@ -68,7 +70,7 @@ In more detail:
   container using whatever stock editor is supplied by the operating system?
   Probably not.
 
-### Why `/data`?
+## Why `/data`?
 * Similar to point 2 above; with many different services and programs using
   different default paths for their data directories, and many of those same
   services using different locations even between operating system
@@ -78,7 +80,7 @@ In more detail:
   either at run time or in our configuration that the data directory resides at
   `/data` we are good to go with no questions asked.
 
-### Why `/log`?
+## Why `/log`?
 * If we've already created an Axle container for our logs at `/log`, we'll use
   `--volumes-from` our already-running "logs" container to make it available now
   to this Hub container and by association to our application Spoke container
@@ -87,6 +89,13 @@ In more detail:
   path (and non-conflicting name) for our log file at run time for our app and
   have our entire clusters logs (for that host) now available.
 
+## Why `/run`?
+Since containers don't run anything by default, this space is largely unused in
+containers. Radial will use this folder however to share unix sockets between
+various Spokes. This is also the location of each spokes Supervisor socketfile.
+This allows one to control all inner processes of a wheel from one place.
+
+## Take-aways
 So here is the key topology principle:
 
 **Never rely on default locations for our configuration files, our data
