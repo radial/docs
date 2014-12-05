@@ -39,9 +39,9 @@ and combine configuration, and Supervisor to manage our all our processes and
 glue it all together.
 
 Radial makes configuration a first-class citizen by stripping it out of the
-application container and putting it in it's own container (name the "hub") which is
-later mounted into the application container (the "spoke"). This allows
-interchangeable and modular application containers for any use.
+application container and putting it in it's own container (named the "hub")
+which is later mounted into the application container (the "spoke"). This allows
+interchangeable and modular application containers for many use cases.
 
 ##The Documentation
 
