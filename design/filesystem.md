@@ -1,4 +1,4 @@
-#Config, Data, Logs, Run
+# Config, Data, Logs, Run
 
 The [Filesystem Hierarchy Standard][fhs] provides a great deal of flexibility
 regarding where and how to organize our file system. On top of that, many of our
@@ -30,7 +30,7 @@ additional items.
 
 In more detail:
 
-##Why `/config`?
+## Why `/config`?
 * We want to avoid editing configuration once our container is running like the
   plague. It's not easily reproducible and promotes run-away container
   modification, which we don't want.

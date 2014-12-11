@@ -1,6 +1,6 @@
-#Radial Documentation
+# Radial Documentation
 
-##What is Radial?
+## What is Radial?
 
 Radial is a [Docker](http://docker.io) container topology strategy for managing
 app stacks on a per-app basis. It was created to help me understand, record, and
@@ -13,7 +13,7 @@ primer for enthusiasts like myself and professionals alike to start to
 understand how the different features of Docker meet the needs of hosting
 processes in a server cluster.
 
-##What Can I Do With It?
+## What Can I Do With It?
 
 Radial is a container topology strategy that is is outlined in this
 documentation and is implemented in the suite of accompanying Docker
@@ -26,7 +26,7 @@ scale up with you into complex cluster use. Hopefully, there are some good ideas
 are in here for you to use or replicate. Better still, hopefully these images
 themselves will serve you well in all your use.
 
-##What's The Strategy?
+## What's The Strategy?
 
 In short, I use the analogy of an "axle", a "hub", and a "spoke" to help
 conceptually link together Docker containers into different classes based on
@@ -43,27 +43,27 @@ application container and putting it in it's own container (named the "hub")
 which is later mounted into the application container (the "spoke"). This allows
 interchangeable and modular application containers for many use cases.
 
-##The Documentation
+## The Documentation
 
-###Concepts
+### Concepts
 
 * [The Topology](/concepts/topology)
 * [The Factors](/concepts/factors)
 
-###Design
+### Design
 
 * [File System Structure](/design/filesystem)
 * [Wheels](/design/wheels)
 * [Radial Images](/design/images)
 * [Supervisor](/design/supervisor)
 
-###Instructions
+### Instructions
 
 * [Axle Containers](/instructions/axle-containers)
 * Hub Containers
 * Spoke Containers
 
-##Help
+## Help
 
 These documents are works-in-progress as I put their suggestions into practice.
 Updates are to come as suggestions and testing come in.  General help and all

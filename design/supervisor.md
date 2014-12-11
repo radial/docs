@@ -1,11 +1,11 @@
-##Process Management
+# Process Management
 
 [Supervisor](http://supervisord.org) is a common choice for process management
 inside Docker containers. Many already have experience with it and it is quite
 simple to setup and use, thus it was included here as well for the Radial
 Topology.
 
-###Configuration
+## Configuration
 
 The [Supervisor skeleton][super_skel] is a
 default configuration for how Supervisor will be run in our Spoke container. It
@@ -22,7 +22,7 @@ In case you would like to use your own Supervisor configuration, there are some
 options you must be mindful of not to change to make sure that the rest of the
 Wheel will continue to work properly.
 
-###Folder Structure
+## Folder Structure
 
 ```
 supervisor
@@ -35,14 +35,14 @@ folder naming and structure can't deviate from the above tree. Note that the
 supervisor folder sits directly in your `/config` directory in the root of your
 Hub container.
 
-###Per-Process init Files
+## Per-Process init Files
 
 In addition to 'sshd.ini', which is enabled by default, any other processes you
 will need for your container (and remember, a Docker best-practice is to keep
 these to a minimum), can have their own '.ini' file put in the
 `/conf/supervisor/conf.d` folder when building your Hub container.
 
-###Logging
+## Logging
 
 By default, the Spoke container, when run, will create a folder in `/log` that
 is exactly the containers ID. It gets it from the '$HOSTNAME' variable that is
