@@ -30,9 +30,11 @@ themselves will serve you well in all your use.
 
 In short, I use the analogy of an "axle", a "hub", and a "spoke" to help
 conceptually link together Docker containers into different classes based on
-what we need the entire stack (the "wheel") to be doing. I've created specialty
-Docker images streamlined for each of these classes that are available on the
-[Docker Index](https://index.docker.io/u/radial). 
+what we need the entire stack (the "wheel") to be doing. Axle containers are
+volume containers, hub containers manage application configuration, and spoke
+containers are our application containers. I've created specialty Docker images
+streamlined for each of these classes and are available on the [Docker
+Index](https://index.docker.io/u/radial). 
 
 These images use tools such as busybox to keep container size down, git to clone
 and combine configuration, and Supervisor to manage our all our processes and
@@ -47,19 +49,19 @@ interchangeable and modular application containers for many use cases.
 
 ### Concepts
 
-* [The Topology](/concepts/topology)
-* [The Factors](/concepts/factors)
+* [The Topology](/concepts/topology.md)
+* [The Factors](/concepts/factors.md)
 
 ### Design
 
-* [File System Structure](/design/filesystem)
-* [Wheels](/design/wheels)
-* [Radial Images](/design/images)
-* [Supervisor](/design/supervisor)
+* [File System Structure](/design/filesystem.md)
+* [Wheels](/design/wheels.md)
+* [Radial Images](/design/images.md)
+* [Supervisor](/design/supervisor.md)
 
 ### Instructions
 
-* [Axle Containers](/instructions/axle-containers)
+* [Axle Containers](/instructions/axle-containers.md)
 * Hub Containers
 * Spoke Containers
 
