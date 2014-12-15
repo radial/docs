@@ -1,26 +1,14 @@
 # Axle Containers
 
 As mentioned before, Axle containers are for hosting regular or
-bind-mounted volumes whose data need to be acted upon by multiple containers.
+bind-mounted volumes. This can be host-specific persistent data, or any other
+type of [volume container](http://crosbymichael.com/advanced-docker-volumes.html).
 
-One example given before was for log files, another could be music or video
-libraries. In the case for logs, we need to be free to spin up apps and assure
-that the logs have a persistent and predictable place to go. Having a service
-like [Logstash](http://logstash.net/) running in your cluster is made easier by
-having all your logs in one place; a single "logs" Axle container. This specific
-method is of course great for smaller scale operations where your cluster
-doesn't have automatic service discovery built-in.
-
-The second example was for bind-mounting files stored locally on the host. I
-have an already existing, and very large audio/video library that I manage,
-modify, and use directly (nfs mounts on my workstations) and indirectly through
-applications in containers (web interfaces to access/stream the library). For
-fully public websites, the Docker best-practice of course is to have nothing
-bind-mounted so as to remain completely portable and machine-independent; and
-that giant media library, according to Twelve-Factor, would need to live in a
-database as an attached resource. Because the world isn't perfect however, this
-option is still available in Radial for the sake of completeness; we have a
-place in our topology for bind-mounts to happen.
+By default, Radial uses such a container to store the Supervisor log output of
+each spoke container. Rather then make a decision on which log management one
+should use, they are instead simply collated into a single location. It's the
+job of some other spoke container to harvest/serve/analyze these logs later if
+one so chooses.
 
 Let's create our above example and make a "logs" Axle container. If we choose to
 make a permanent image that we can reuse, the Dockerfile would possibly contain:
@@ -28,8 +16,13 @@ make a permanent image that we can reuse, the Dockerfile would possibly contain:
 ```
 FROM    radial/axle-base
 VOLUME  ["/log"]
-CMD     ["/bin/true"]
+CMD     ["IDLE"]
 ```
+
+Note that the program "IDLE" is the equivalent of `tail -f /dev/null` meant
+solely to keep the container from exiting. This makes container management a bit
+more intuitive regarding volume containers.
+
 It could be built via:
 
 `docker build -t logs .`
@@ -38,10 +31,7 @@ and run via:
 
 `docker run --name logs logs`
 
-Or we can do it all in our run step with:
+Building this container however doesn't have any benefits, so usually it can
+just be run directly from command line with:
 
-`docker run --name logs --volume /log radial/axle-base /bin/true`
-
-Both methods are identical because the only data being written is to an exposed
-volume at `/log`, so docker doesn't keep any data in it's version control in
-either case. Use whichever fits your workflow.
+`docker run --name logs --volume /log radial/axle-base IDLE`
