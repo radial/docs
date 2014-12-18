@@ -1,122 +1,143 @@
 # The Factors
 
-The crux of all the following issues is this design principle in docker:
-
-*Shared volumes are flexible, but dynamic with data, and the build process is
-static, but very inflexible if you want to remain portable.*
-
 With inspiration from [The Twelve-Factor App](http://12factor.net), I explore
-some of the relevant factors as they pertain to Dockers design.
+how Radial helps to fulfil certain 12-factor principles using Docker features.
 
 ## Codebase
 
 >One codebase tracked in revision control, many deploys
 
-Docker gives us two methods: `ADD` in a Dockerfile during the build process or
-some other method of checking out/downloading code from an external code
-repository using operating system tools from your container. Depending on when
-this is done (in the Dockerfile build-process via `ADD`, or using the `CMD` or
-`ENTRYPOINT` of the resulting container) we get varying combinations of
-portability vs management. Hard-code your repository location into your
-Dockerfile or insert the code in the build via `ADD` and you loose portability
-of the Dockerfile, and if you're not careful how you inject the code in either
-`CMD` or `ENTRYPOINT` steps, you might never be able to actually secure it in a
-Docker "image" for version control because it will be forever linked to a
-running container via a shared `VOLUME` which is not captured via `docker
-commit`.
-
-Note: for those that don't care about sharing their Dockerfile on an index,
-just having a Dockerfile sit in their code base and use `ADD` is a great way to
-go. I'm just trying to present some alternate methods for those that want to
-keep that aspect of portability as well as take advantage of Dockers version
-control system.
-
-**Issue 1: How to get different versions of app code into Docker containers to
-easily allow "many deploys"?**
+Docker images make this a breeze. Dockerfiles reproduce a build on any machine
+and sharing them is straightforward across machines. Where Radial adds to this
+principal, is that it specifies a container solely for the application itself,
+separate from any configuration or environment information to make this more
+modular. This is the spoke container.
 
 ## Configuration
 
 >Store config in the environment
 
-Configuration and docker; it's quite a task. We need to be able to modify the
-default configuration of our servers and processes and our own apps, but still
-also want portability of our Dockerfile AND the ability to tinker with the
-configuration at a later date in an intuitive way that doesn't break our
-deployment or require rebuilding everything from scratch in a Dockerfile.
+The typical interpretation of this factor is with regards to configuration that
+varies in between deploys (staging, production, developer environments, etc).
+This can be things such as credentials to external services, and per-deploy
+values that are what make a staging deploy different from a production one for
+example. 12-factor states these values should live in environment variables, not
+in the code itself.
 
-**Issue 2: How to get both internal application configuration as well as
-deploy-specific configuration into docker containers?**
+Radial wheels take this concept a bit further. As stated in "Codebase", since we
+separate out ALL configuration from the application container, we have a little
+more freedom for combining configuration and code because everything is designed
+to be modular. Radial uses a hub container to store application configuration,
+and since our fundamental "unit" for deploying apps is the wheel (multiple
+containers) instead of the single container, we can now use the wheel repository
+as a method to store this deploy specific information. Programs like [fig][fig]
+allow us to think in terms of multiple containers coordinated together. It is in
+a fig.yml, or some similar orchestration configuration, that we can specify our
+remaining environment configuration. The spirit of this 12-factor principle is
+still kept; our application source code is completely separate from any and all
+instance and configuration settings.
+
+[fig]:http://www.fig.sh
+
+## Backing Services
+
+>Treat backing services as attached resources
+
+Because of spoke containers, use of an application can be ubiquitous across any
+use case. Again, because application configuration in the hub container is
+separate from the application in the spoke container, one can easily use the
+same Docker image for any situation. No need to make an entirely separate image
+just because you want to change configuration settings. This isn't specific to
+this 12-factor principle, but this is especially useful when dealing with
+database services, which usually a little more complex to setup.
 
 ## Build-Release-Run
-
+ 
 >Strictly separate build and run stages
 
-Docker forces you to separate these stages. So what's the issue? It's in actual
-implementation of these stages that is unclear. Putting everything into one
-Dockerfile is very slow to build, and not very portable. Plus, one would ideally
-not want to bother with anything other then deploying *only* the change they
-made to the configuration/codebase/environment etc., so that they can make use
-of Docker's caching system and be able to quickly deploy/revoke updates.
+Docker really does force you to separate these stages. Build is represented by a
+`docker build` command, release is a `docker create` command with environment
+variables to input the configuration, and you run it immediately with `docker
+run`.
 
-The more modular and separate different aspects of the deployment are, the
-easier it is to modify and piece them together again; modify
-configuration but keep the app, compile the app with a new version of the
-language used to make it, test the entire thing on a new operating system etc.
-Docker makes these things trivially easy to do technically, but it's not quite
-clear how best to manage this process yet.
+The component of this principle that Radial helps with is the "release" stage;
+the combining of application with configuration. Because configuration and
+application code are represented by their own containers, all it takes is a
+simple `--volumes-from` commands to link up a spoke container to it's
+configuration in the hub. This combination can be very quick to implement
+because we don't require a build step just to change configuration. Already have
+a working configuration that you want to test with a new version of the binary?
+Use the existing hub container image to test it out. This modularity makes the
+various combinations easy to manage because it encourages smaller images that can
+easily be pieced back together in case of rollback.
 
-**Issue 3: How to deploy my changes easily, modularly, and sequentially?**
+## Concurrency
+
+While concurrency is more about designing a stateless app then it is about how
+you organize your containers, I feel that Radial's modular design helps
+encourage this. Because configuration is stored in the hub container, and
+because volume sharing is done predictably (hub does `--volumes-from` axles,
+spokes do `--volumes-from` the hub), spoke containers can be spun up and scaled
+on an existing wheel and simply attached to it. This can give a simple wheel
+more "features" such as service registration or application monitoring, or even
+run multiple identical instances of already existing spoke containers.
 
 ## Disposability
 
 >Maximize robustness with fast startup and graceful shutdown
 
-This again requires a little bit of Dockerfile/image strategy in order to get
-that lean and quick startup as well as graceful exit/restart of processes when
-parts of your deployment change.
+Radial uses small and modular images for quick startup,
+[Supervisord][supversior] for in container process management of one or more
+running processes within the container itself, and carefully designed entrypoint
+scripts to facilitate proper transfer of UNIX signals from the docker daemon and
+enforce proper behavior of container start, restart, and shutdown procedures.
 
-**Issue 4: How to design the topology of my images and running
-containers to get modularity and easy startup/shutdown/restart of my deployment
-components?**
+[supervisor]:http://supervisord.org
 
 ## Dev/prod parity
 
 >Keep development, staging, and production as similar as possible
 
-Docker on your workstation, Docker on your server cluster; done! Yes, but
-sometimes with caveats. You ideally want everything under version control
-(Dockerfiles, app code, the deployment configuration itself) and accessible via
-repositories so that YOU put together implementations on your workstation the
-same way a production server does in your cluster
-
-**Issue 5: What's my strategy to match development and production practices and
-methods?**
+The easier it is to reuse the same core images for development and production,
+the closer the development environment will be to production. Many more factors
+go into supporting this principle of course, but as far as spreading an
+application stack across Docker containers goes, if you can use the same web
+server and database image on your development machine as your production
+machines, only making small configuration changes in your hub container as
+needed, we are one step closer to keeping this 12-factor principle.
 
 ## Logs
 
 >Treat logs as event streams
 
-Logs are handled uniquely in Docker it seems because the first inclination is
-for one to run a process in the foreground and let all log/debug information
-just stream to `stdout` just to keep their container from quitting on them. But
-as Twelve-Factor states, we need a process agnostic way to handle them outside
-of our app and across containers. `docker logs` is handy for quick status
-updates of your container, but as a long term way to handle log output, it is
-just not feasible. Try running a very verbose server for a couple days and then
-running `docker logs` and see what happens. EVERYTHING from the very beginning
-streams down your monitor...and streams...and streams...Plus you can't save and
-analyze it later without host dependent hacks.
-
-**Issue 6: How best to handle logs accross multiple Docker containers in a
-server cluster?**
+As far as the application is concerned, writing to STDOUT or STDERR is mandatory
+in order to work with [Supervisord][supervisor]. So this principle is preserved;
+the application itself doesn't bother with log files. However, Supervisor itself
+does in fact write these logs to files, and our end goal still is to make our
+log events a _stream_, not just files. The Radial solution to this is to gather
+all logs for the wheel in a single spot, the `/log` directory. Within it, unique
+folders are created that allow for any number of spokes to write logs here
+without name collisions. The idea is simple, if we can make all the logs
+available in a predictable location, we can use whatever logging program we want
+later to turn these log files into a stream. The log harvesting itself is a
+feature for it's own spoke container, and Radial doesn't make that decision for
+you by baking in the log management into it's containers.
 
 ## Admin Processes
 
 >Run admin/management tasks as one-off processes
 
-Docker doesn't yet have support for multiple processes in our containers as a
-first class feature. Yet we need to allow easy admin and maintenance tasks of
-already running applications in our containers. 
+Radial spoke containers allow for a standard daemon mode as well as a custom
+entrypoint-like command mode that allows one to specify an alternate behavior
+for that spoke container. This feature allows one to use the same spoke
+container to run a database (say postgresql) and manage it directly using
+it's management program such as `psql`. This keeps the environment between the
+admin process and the app identical. 
 
-**Issue 7: What is a viable strategy for running admin processes on already
-running containers?**
+To further simplify this task, Radial organizes all Supervisord unix sockets as
+well as any other application sockets in the hub container in a shared `/run`
+directory for easy inter-spoke communication. This has the added benefit of also
+allowing access to application management via the unix sockets without using
+built-in SSH or opening any holes within the spoke container itself. One-off
+admin/management tasks are added onto a wheel just like any other spoke
+container would. Everything it needs will be available via the hub.
