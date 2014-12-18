@@ -1,9 +1,9 @@
 # The Axle-Hub-Spoke Topology
 
-Before many of the Docker container orchestrators became popular and mature,
-manual lifecycle tasks of a cluster of containers was a bit of a mess. I wanted
-to streamline my understanding of application stack components and fit them to
-Docker features intuitively and systematically. Even now with tools like
+Before many of the Docker container orchestration services became popular and
+mature, manual lifecycle tasks of a cluster of containers was a bit of a mess. I
+wanted to streamline my understanding of application stack components and fit
+them to Docker features intuitively and systematically. Even now with tools like
 [Fig][fig], [Kubernetes][kube], and others, I'm finding these topology
 principals very easy to transfer no matter the orchestration tool.
 
@@ -33,6 +33,10 @@ predictable method for the ways that:
 * volumes get created, shared and persisted across containers
 * logs are stored and collected
 * admin processes are carried out and how those changes are kept
+
+[kube]:http://googlecloudplatform.github.io/kubernetes
+[fig]:http://www.fig.sh
+
 
 ## The Axle Container
 
@@ -69,10 +73,11 @@ Hub containers are a type of volume container with three purposes:
   communication.
 
 The idea is that the hub is the gathering point for all the complexity of your
-app as it relates to your cluster: the volumes, the local bind mounts, the
-configuration etc., so that your spoke container is free just to worry about the
-code and the running process. This completely separates the configuration from
-the application itself allowing further modularity with managing everything.
+wheel as it relates to your stack: the volumes, the local bind mounts, the
+configuration etc., so that your spoke containers are free just to worry about
+the code and the running process. This completely separates the configuration
+from the application itself allowing further modularity with managing
+everything.
 
 ## The Spoke Container
 
@@ -107,13 +112,11 @@ Designing spoke containers this way encourages safer application containers
 because it doesn't attempt to make any user-friendly/configuration/security
 trade-offs.
 
-## The Wheel
+## Wheels
 
 With the above responsibilities delegated amongst the three types of containers,
-our application stack is now fully modularized. All-together, an instance of an
-axle, a hub, and a spoke container as they relate to a single application stack
-can be referred to as a "wheel" and [packaged all-together](/docs/wheels) as
-such.
-
-[kube]:http://googlecloudplatform.github.io/kubernetes
-[fig]:http://www.fig.sh
+our application stack can be fully modularized. All-together, an instance of any
+combination of axles, a single hub, and any number of spoke containers can be
+referred to as a "wheel" and [packaged all-together](/docs/wheels) as such. At
+the moment, wheels designed to be an atomic unit that is located on a single
+host.
