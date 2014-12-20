@@ -51,6 +51,7 @@ interchangeable and modular application containers for many use cases.
 
 * [The Topology](/concepts/topology.md)
 * [The Factors](/concepts/factors.md)
+* [Terms](/concepts/terms.md)
 
 ### Design
 
