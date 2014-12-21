@@ -30,7 +30,10 @@ additional items.
 
 In more detail:
 
+[fhs]: http://www.pathname.com/fhs/
+
 ## Why `/config`?
+
 * We want to avoid editing configuration once our container is running like the
   plague. It's not easily reproducible and promotes run-away container
   modification, which we don't want.
@@ -43,6 +46,7 @@ In more detail:
   our binaries configuration to it's own location in `/config`.
 
 ## Why `/data`?
+
 Similar to point 2 above; with many different services and programs using
 different default paths for their data directories, and many of those same
 services using different locations even between operating system installations,
@@ -53,6 +57,7 @@ configuration that the data directory resides at `/data` we are good to go with
 no questions asked.
 
 ## Why `/log`?
+
 If we've already created an axle container for our logs at `/log`, we'll use
 `--volumes-from` our already-running "logs" container to make it available now
 to our hub container and by association to our application spoke container
@@ -62,9 +67,8 @@ our log file at run time for our app and have our logs now available in one
 location for processing using whatever method we choose.
 
 ## Why `/run`?
+
 Since containers don't run anything by default, this space is largely unused in
 containers. Radial will use this folder however to share unix sockets between
 various spokes. This is also the location of each spokes Supervisor socketfile.
 This allows one to control all inner processes of a wheel from one place.
-
-[fhs]: http://www.pathname.com/fhs/

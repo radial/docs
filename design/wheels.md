@@ -1,10 +1,14 @@
 # The Wheel
 
-The wheel is the standard model for packaging your entire stack. You can see an
+The Wheel is the standard model for packaging your entire stack. You can see an
 example repository [here](https://github.com/radial/template-wheel) to get a
 more complete sense of how such a thing would work. While some components of the
 Wheel repository are works-in-progress and subject to change, it's still worth
 explaining here to get a sense of what I hoped to achieve with it.
+
+Note that what is described here is a Wheel repository. It is a single
+repository that can be used in conjunction with container orchestration to
+produce the "running" Wheel, which is a collection of interchangeable containers.
 
 ## File structure
 
