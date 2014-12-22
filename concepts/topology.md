@@ -117,6 +117,6 @@ trade-offs.
 With the above responsibilities delegated amongst the three types of containers,
 our application stack can be fully modularized. All-together, an instance of any
 combination of axles, a single hub, and any number of spoke containers can be
-referred to as a "wheel" and [packaged all-together](/docs/wheels) as such. At
+referred to as a "wheel" and [packaged all-together](/design/wheels.md) as such. At
 the moment, wheels designed to be an atomic unit that is located on a single
 host.
