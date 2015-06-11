@@ -1,5 +1,48 @@
 # Radial Documentation
 
+## **PENDING UPDATES**
+
+Radial was originally conceived very early in the Docker story and this has been
+an alpha quality experiment to try and solve some of the gaps in the Docker
+ecosystem. Many important features were not implemented yet and the ecosystem
+was exploding with many different ways to use containers and best practices were
+being stumbled upon slowly over time. Many things have happened since Radial's
+inception that have made the Docker ecosystem a little more mature:
+
+* Kubernetes has come on the scene and dominated the way orchestration is
+  handled at scale
+* The Docker daemon has matured considerably and allows for much more control of
+  the processes running in the containers
+* The orchestration and networking picture for Docker has a more clear
+  trajectory with the introduction of machine, compose, and swarm
+* Tooling around Docker has also matured and there is less and less reinventing
+  of common tasks that must be done
+
+So with all this considered, I've revisited what Radial is, and what it should
+be in relation to all these changes and I now have a better idea of what Radial
+can contribute to the bigger picture. In general, this is a focus on simple
+implementation of container best practices that are orchestration agnostic and
+can scale both large and small for the average user that does not want to make
+custom Dockerfiles in order to use a program. Some of the upcoming changes
+include:
+
+* Pulling supervisor from the containers.
+    * Radial will strictly uphold the one process per container principal as it
+      is much easier now to send signals, enter container processes, and link
+      containers to each other. There is less and less evidence in my experience
+      to warrent having multiple processes in a container ever.
+* Standardizing setup and entrypoint scripts.
+    * Drop-in setup and running of final binaries
+* Simpler log management
+    * Make use of the logging driver in Docker 1.6
+* Simpler hub scripts
+    * using new env-file
+* Spec
+    * define a spec to promote standardization and interoperability
+
+And many more. Check out the beta branches of each repo to check out the latest
+and greatest. Comments always welcome, Thanks!
+
 ## What is Radial?
 
 Radial is a [Docker](http://docker.io) container topology strategy for managing
